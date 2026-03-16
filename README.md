@@ -1,4 +1,4 @@
-# Surface Defect Detection on NEU-DET
+﻿# Surface Defect Detection on NEU-DET
 
 End-to-end project template for industrial surface defect classification using Computer Vision and Deep Learning.
 
@@ -15,54 +15,77 @@ End-to-end project template for industrial surface defect classification using C
 ## Project Structure
 ```text
 .
-+-- data/
-�   +-- raw/                 # Original NEU-DET data
-�   +-- processed/           # Split output: train/val/test
-+-- outputs/
-�   +-- checkpoints/         # Saved model checkpoints (.pt)
-�   +-- figures/             # Curves and confusion matrices
-�   +-- reports/             # Metrics JSON files
-+-- src/
-�   +-- config.py
-�   +-- data.py
-�   +-- model.py
-�   +-- utils.py
-+-- eda.py
-+-- prepare_data.py
-+-- train.py
-+-- evaluate.py
-+-- predict.py
-+-- requirements.txt
+├── data/
+│   ├── raw/                 # Original NEU-DET data
+│   └── processed/           # Split output: train/val/test
+├── outputs/
+│   ├── checkpoints/         # Saved model checkpoints (.pt)
+│   ├── figures/             # Curves and confusion matrices
+│   └── reports/             # Metrics JSON files
+├── src/
+│   ├── config.py
+│   ├── data.py
+│   ├── model.py
+│   └── utils.py
+├── eda.py
+├── prepare_data.py
+├── train.py
+├── evaluate.py
+├── predict.py
+└── requirements.txt
 ```
 
-## Environment Setup (Bash)
+## Setup Guide
+
+### 1. Prerequisites
+- Python `3.10+`
+- `pip`
+- Optional but recommended: NVIDIA GPU + CUDA-enabled PyTorch
+
+### 2. Create and activate a virtual environment
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-## Dataset Preparation
-Place NEU-DET in `data/raw/` with this layout:
-
-```text
-data/raw/
-+-- Crazing
-+-- Inclusion
-+-- Patches
-+-- Pitted_surface
-+-- Rolled-in_scale
-+-- Scratches
+### 3. Download NEU-DET with `kagglehub`
+Install `kagglehub`:
+```bash
+pip install kagglehub
 ```
 
-Run EDA (class count chart):
+Download dataset:
+```bash
+python -c "import kagglehub; print(kagglehub.dataset_download('kaustubhdikshit/neu-surface-defect-database'))"
+```
+
+Then copy images into this structure:
+```text
+data/raw/
+├── Crazing
+├── Inclusion
+├── Patches
+├── Pitted_surface
+├── Rolled-in_scale
+└── Scratches
+```
+
+### 4. Check dataset and create train/val/test splits
+Run EDA:
 ```bash
 python eda.py --data-dir data/raw
 ```
 
-Split data into train/val/test = 70/15/15:
+Split data with ratio `70/15/15`:
 ```bash
 python prepare_data.py --input-dir data/raw --output-dir data/processed --seed 42
+```
+
+### 5. Verify GPU availability (optional)
+```bash
+python -c "import torch; print('CUDA:', torch.cuda.is_available()); print(torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CPU mode')"
 ```
 
 ## Training

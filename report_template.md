@@ -7,7 +7,7 @@ Surface Defect Detection in Industrial Manufacturing Using Deep Learning on NEU-
 - Problem context in manufacturing.
 - Objective of this project.
 - Dataset and methods used.
-- Main results (best accuracy/F1).
+- Main results (ResNet18): best validation accuracy `1.0000`, test accuracy `0.9815`, macro F1 `0.98`.
 - Practical contribution and limitations.
 
 ## 1. Introduction
@@ -69,17 +69,17 @@ Surface Defect Detection in Industrial Manufacturing Using Deep Learning on NEU-
 ### 3.4 Training Setup
 - Loss: CrossEntropyLoss.
 - Optimizer: Adam.
-- Batch size:
-- Learning rate:
-- Epochs:
-- Device (CPU/GPU):
+- Batch size: 32
+- Learning rate: 0.0005
+- Epochs: 25
+- Device (CPU/GPU): GPU (if CUDA available), otherwise CPU
 
 ## 4. Experiments
 ### 4.1 Experiment Matrix
 | Experiment ID | Model | Epochs | Batch Size | LR | Notes |
 |---|---|---:|---:|---:|---|
 | E1 | custom_cnn |  |  |  |  |
-| E2 | resnet18 |  |  |  |  |
+| E2 | resnet18 | 25 | 32 | 0.0005 | Best validation accuracy = 1.0000 |
 | E3 | mobilenet_v3_small |  |  |  |  |
 
 ### 4.2 Training Curves
@@ -94,7 +94,7 @@ Surface Defect Detection in Industrial Manufacturing Using Deep Learning on NEU-
 | Model | Validation Accuracy | Test Accuracy | Macro Precision | Macro Recall | Macro F1 |
 |---|---:|---:|---:|---:|---:|
 | custom_cnn |  |  |  |  |  |
-| resnet18 |  |  |  |  |  |
+| resnet18 | 1.0000 | 0.9815 | 0.98 | 0.98 | 0.98 |
 | mobilenet_v3_small |  |  |  |  |  |
 
 ### 5.2 Confusion Matrix Analysis
@@ -106,7 +106,21 @@ Surface Defect Detection in Industrial Manufacturing Using Deep Learning on NEU-
 
 ### 5.3 Class-wise Metrics
 - Use `outputs/reports/metrics_<model>.json`.
-- Summarize precision/recall/F1 by class.
+- ResNet18 results:
+
+| Class | Precision | Recall | F1-score | Support |
+|---|---:|---:|---:|---:|
+| Crazing | 0.96 | 1.00 | 0.98 | 45 |
+| Inclusion | 1.00 | 0.93 | 0.97 | 45 |
+| Patches | 1.00 | 0.96 | 0.98 | 45 |
+| Pitted_surface | 0.94 | 1.00 | 0.97 | 45 |
+| Rolled-in_scale | 1.00 | 1.00 | 1.00 | 45 |
+| Scratches | 1.00 | 1.00 | 1.00 | 45 |
+
+- Overall:
+  - Accuracy: `0.9815` (270 samples)
+  - Macro avg: Precision `0.98`, Recall `0.98`, F1 `0.98`
+  - Weighted avg: Precision `0.98`, Recall `0.98`, F1 `0.98`
 
 ## 6. Demo System
 ### 6.1 Inference Pipeline
