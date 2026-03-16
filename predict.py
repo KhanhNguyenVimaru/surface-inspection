@@ -1,14 +1,21 @@
 import argparse
 
 import torch
-from PIL import Image
+from PIL import Image, ImageFilter, ImageOps
 from torchvision import transforms
 
 from src.config import IMG_SIZE
 from src.model import build_model
 
 
-def infer_one_image(image_path: str, checkpoint_path: str, model_name: str):
+def preprocess_surface_image(image: Image.Image) -> Image.Image:
+    gray = ImageOps.grayscale(image)
+    denoised = gray.filter(ImageFilter.MedianFilter(size=3))
+    enhanced = ImageOps.autocontrast(denoised, cutoff=1)
+    return enhanced.convert("RGB")
+
+
+def infer_one_image(image_path: str, checkpoint_path: str, model_name: str, apply_filter: bool = False):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     checkpoint = torch.load(checkpoint_path, map_location=device)
     class_names = checkpoint["class_names"]
@@ -25,7 +32,12 @@ def infer_one_image(image_path: str, checkpoint_path: str, model_name: str):
         ]
     )
 
-    image = Image.open(image_path).convert("RGB")
+    image = Image.open(image_path)
+    if apply_filter:
+        image = preprocess_surface_image(image)
+    else:
+        image = image.convert("RGB")
+
     tensor = tf(image).unsqueeze(0).to(device)
 
     with torch.no_grad():
@@ -42,9 +54,10 @@ def main():
     parser.add_argument("--image", type=str, required=True)
     parser.add_argument("--checkpoint", type=str, required=True)
     parser.add_argument("--model", type=str, required=True, choices=["custom_cnn", "resnet18", "mobilenet_v3_small"])
+    parser.add_argument("--apply-filter", action="store_true", help="Apply grayscale + denoise + autocontrast filter")
     args = parser.parse_args()
 
-    pred, conf = infer_one_image(args.image, args.checkpoint, args.model)
+    pred, conf = infer_one_image(args.image, args.checkpoint, args.model, apply_filter=args.apply_filter)
     print(f"Prediction: {pred}")
     print(f"Confidence: {conf:.4f}")
 

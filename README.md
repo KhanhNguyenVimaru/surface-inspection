@@ -27,11 +27,13 @@ End-to-end project template for industrial surface defect classification using C
 │   ├── data.py
 │   ├── model.py
 │   └── utils.py
+├── frontend/               # Vue app (separate UI)
 ├── eda.py
 ├── prepare_data.py
 ├── train.py
 ├── evaluate.py
 ├── predict.py
+├── app.py                  # Flask API backend
 └── requirements.txt
 ```
 
@@ -130,6 +132,35 @@ Example output:
 Prediction: Scratches
 Confidence: 0.92
 ```
+
+## Backend API (Flask)
+Start Flask API:
+
+```bash
+python app.py
+```
+
+API endpoints:
+- `GET /api/health`
+- `POST /api/predict` (multipart form-data with key `image`)
+
+Notes:
+- Uses checkpoint: `outputs/checkpoints/best_resnet18.pt`
+- If checkpoint is missing, train model first.
+
+## Frontend UI (Vue + shadcn-style components)
+Run in a separate terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open:
+- `http://127.0.0.1:5173`
+
+The frontend proxies `/api/*` requests to Flask at `http://127.0.0.1:5000`.
 
 ## Output Artifacts
 - `outputs/checkpoints/best_<model>.pt`
