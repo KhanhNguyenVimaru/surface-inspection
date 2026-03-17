@@ -49,7 +49,7 @@ const normalizedConfidence = computed(() => {
 const confidenceRemainder = computed(() => Number((100 - normalizedConfidence.value).toFixed(2)));
 
 const confidencePieStyle = computed(() => ({
-  background: `conic-gradient(rgb(244 244 245) 0% ${normalizedConfidence.value}%, rgb(39 39 42) ${normalizedConfidence.value}% 100%)`,
+  background: `conic-gradient(rgb(14 116 144) 0% ${normalizedConfidence.value}%, rgb(226 232 240) ${normalizedConfidence.value}% 100%)`,
 }));
 
 const normalizedPrediction = computed(() => {
@@ -252,10 +252,10 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="relative min-h-screen overflow-hidden bg-background text-foreground">
-    <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(63,63,70,0.28),_rgba(9,9,11,0.95)_60%)]" />
+    <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(14,116,144,0.2),_rgba(248,250,252,0.95)_60%)]" />
     <div class="container relative py-8 md:py-12">
-      <Card class="border-border/80 bg-card/95 shadow-xl shadow-black/35 backdrop-blur-sm">
-        <CardHeader class="space-y-3 border-b border-border pb-5">
+      <Card class="border-border/80 bg-card/95 shadow-xl shadow-slate-200/70 backdrop-blur-sm">
+        <CardHeader class="space-y-3 border-b border-border/80 pb-5">
           <CardTitle class="text-2xl text-foreground md:text-3xl">Surface Defect Detection</CardTitle>
           <CardDescription class="max-w-2xl text-muted-foreground">
             Upload a metal surface image and get defect class prediction from the ResNet18 model via Flask API.
@@ -271,14 +271,14 @@ onBeforeUnmount(() => {
           </Alert>
           <Alert v-if="errorMessage" variant="destructive">{{ errorMessage }}</Alert>
 
-          <div class="space-y-3 rounded-lg border border-border bg-zinc-950/50 p-4">
+          <div class="space-y-3 rounded-lg border border-border bg-slate-50 p-4">
             <div class="flex items-center justify-between gap-3">
               <Label for="image" class="text-foreground">Picture</Label>
-              <div class="inline-flex rounded-md border border-border bg-zinc-900/60 p-1 text-xs">
+              <div class="inline-flex rounded-md border border-border bg-white p-1 text-xs shadow-sm">
                 <button
                   type="button"
                   class="rounded px-3 py-1.5 transition-colors"
-                  :class="inputMode === 'upload' ? 'bg-zinc-100 text-zinc-900' : 'text-muted-foreground hover:text-foreground'"
+                  :class="inputMode === 'upload' ? 'bg-cyan-700 text-white' : 'text-muted-foreground hover:text-foreground'"
                   @click="switchInputMode('upload')"
                 >
                   Upload
@@ -286,7 +286,7 @@ onBeforeUnmount(() => {
                 <button
                   type="button"
                   class="rounded px-3 py-1.5 transition-colors"
-                  :class="inputMode === 'camera' ? 'bg-zinc-100 text-zinc-900' : 'text-muted-foreground hover:text-foreground'"
+                  :class="inputMode === 'camera' ? 'bg-cyan-700 text-white' : 'text-muted-foreground hover:text-foreground'"
                   @click="switchInputMode('camera')"
                 >
                   Camera
@@ -300,19 +300,19 @@ onBeforeUnmount(() => {
                   id="image"
                   type="file"
                   accept=".jpg,.jpeg,.png,.bmp"
-                  class="h-10 rounded-md border-input bg-zinc-900/70 file:mr-3 file:rounded-sm file:bg-zinc-800 file:px-2 file:text-zinc-100 hover:file:bg-zinc-700"
+                  class="h-10 rounded-md border-input bg-white file:mr-3 file:rounded-sm file:bg-slate-100 file:px-2 file:text-slate-700 hover:file:bg-slate-200"
                   @change="onFileChange"
                 />
                 <p class="text-xs text-muted-foreground">Select an image to upload for prediction.</p>
               </template>
               <template v-else>
-                <div class="rounded-md border border-border bg-zinc-900/70 p-2">
+                <div class="rounded-md border border-border bg-white p-2">
                   <video
                     ref="videoRef"
                     autoplay
                     playsinline
                     muted
-                    class="h-56 w-full rounded-sm border border-border bg-zinc-950 object-contain"
+                    class="h-56 w-full rounded-sm border border-border bg-slate-100 object-contain"
                   />
                   <canvas ref="canvasRef" class="hidden" />
                 </div>
@@ -334,7 +334,7 @@ onBeforeUnmount(() => {
                 <input
                   v-model="applyFilter"
                   type="checkbox"
-                  class="h-4 w-4 rounded border border-input bg-transparent accent-zinc-100"
+                  class="h-4 w-4 rounded border border-input bg-white accent-cyan-700"
                 />
                 Apply grayscale enhancement filter (recommended for steel texture images)
               </label>
@@ -357,25 +357,25 @@ onBeforeUnmount(() => {
           </div>
 
           <div class="grid gap-4 md:grid-cols-2">
-            <Card class="border-border bg-zinc-950/55 shadow-sm">
+            <Card class="border-border bg-white shadow-sm">
               <CardHeader class="pb-3">
                 <CardTitle class="text-lg text-foreground">Input Preview</CardTitle>
                 <CardDescription class="text-muted-foreground">Review the image before inference.</CardDescription>
               </CardHeader>
               <CardContent>
-                <div class="flex min-h-72 items-center justify-center rounded-md border border-dashed border-border bg-zinc-900/60 p-2">
+                <div class="flex min-h-72 items-center justify-center rounded-md border border-dashed border-border bg-slate-50 p-2">
                   <img
                     v-if="previewUrl"
                     :src="previewUrl"
                     alt="preview"
-                    class="max-h-80 w-full rounded-sm border border-border object-contain bg-zinc-950"
+                    class="max-h-80 w-full rounded-sm border border-border object-contain bg-white"
                   />
                   <p v-else class="text-sm text-muted-foreground">No image selected.</p>
                 </div>
               </CardContent>
             </Card>
 
-            <Card class="border-border bg-zinc-950/55 shadow-sm">
+            <Card class="border-border bg-white shadow-sm">
               <CardHeader class="pb-3">
                 <CardTitle class="text-lg text-foreground">Prediction Output</CardTitle>
               </CardHeader>
@@ -394,20 +394,20 @@ onBeforeUnmount(() => {
                     <strong class="text-foreground">{{ result.preprocessing?.apply_filter ? "On" : "Off" }}</strong>
                   </p>
                   <div class="pt-1">
-                    <div class="rounded-md border border-border bg-zinc-900/60 p-3">
+                    <div class="rounded-md border border-border bg-slate-50 p-3">
                       <p class="mb-2 text-xs uppercase tracking-wide text-muted-foreground">Confidence</p>
                       <div class="flex items-center gap-3">
                         <div :style="confidencePieStyle" class="relative h-20 w-20 rounded-full">
-                          <div class="absolute inset-[9px] rounded-full bg-zinc-950" />
+                          <div class="absolute inset-[9px] rounded-full bg-white" />
                         </div>
                         <div class="space-y-1 text-xs">
                           <p class="flex items-center gap-2">
-                            <span class="inline-block h-2 w-2 rounded-full bg-zinc-100" />
+                            <span class="inline-block h-2 w-2 rounded-full bg-cyan-700" />
                             <span class="text-muted-foreground">Confident</span>
                             <strong class="text-foreground">{{ normalizedConfidence.toFixed(2) }}%</strong>
                           </p>
                           <p class="flex items-center gap-2">
-                            <span class="inline-block h-2 w-2 rounded-full bg-zinc-700" />
+                            <span class="inline-block h-2 w-2 rounded-full bg-slate-300" />
                             <span class="text-muted-foreground">Uncertain</span>
                             <strong class="text-foreground">{{ confidenceRemainder.toFixed(2) }}%</strong>
                           </p>
